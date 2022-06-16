@@ -15,5 +15,8 @@ module.exports = {
     '@typescript-eslint'
   ],
   rules: {
+    'space-before-function-paren': 'off',
+    quotes: 0,
+    indent: 0
   }
 }

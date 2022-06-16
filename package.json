@@ -27,7 +27,10 @@
   "dependencies": {
     "express": "^4.18.1",
     "favicon": "^0.0.2",
+    "joi": "^17.6.0",
     "morgan": "^1.10.0",
+    "mysql2": "^2.3.3",
+    "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.6"
   }
 }
