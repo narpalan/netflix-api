@@ -7,21 +7,19 @@ const showsService = new ShowService();
 class ShowController {
 
   public static async list(req: Request, res: Response){    
-    if(('id' in req.query) || ('id' in req.body)){ 
+    if(('id' in req.query) ){ 
       try{
         let id;
         if(req.query.id){
            id = req.query.id;
-        }else if(req.body.id){
-           id = req.body.id;
         }
         id = Number(id);        
         const show = await showsService.find(Number(id))
         res.status(HTTP_STATUS.OK).json(show);
         return;
       } catch(e:any){
-        
-        res.send(e);        
+        console.log(e);
+        res.status(e.status).json(e.message);        
       }    
       
     }

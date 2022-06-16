@@ -13,7 +13,7 @@ const jsonParserMidwr = express.json();
 function startRoutes(app: Application){
   app.use(jsonParserMidwr);
   app.use(morgan('tiny'));
-  //app.use(errorHandler);
+  app.use(errorHandler);
   
   app.use(routes);
 }
