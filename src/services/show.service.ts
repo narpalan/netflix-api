@@ -38,7 +38,7 @@ class ShowService {
    * 
    * @beta
    */
-  async find(show: Show | boolean | number = false, limiter:number = 0){
+  async find(show: Show | boolean | number  = false, limiter:number = 0){
     if(show === false){
       return this.showRepository.find()
     }
@@ -58,12 +58,13 @@ class ShowService {
   }
   
   async delete(id: number){
-    const show = await this.showRepository.delete(id);
+   
+      const show = await this.showRepository.delete(id);
 
     if(show.affected){
       return show;
     }
-    else throw new NotFoundException('Não encontrado');
+    else throw new NotFoundException('Não encontrado');    
   }
 
   create(show: createShowDTO){

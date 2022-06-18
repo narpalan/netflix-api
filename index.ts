@@ -1,9 +1,18 @@
 import "reflect-metadata";
 import express from 'express';
 
+
 import runDatabase from "./config/database/data-source";
 import startRoutes from "./src/routers";
+import { ExtractJwt } from "passport-jwt";
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: 'ABCBANANA' 
+}
 
+const strategy = new JwtStrategy(opts, function(payload, done){
+  console.log(payload)
+})
 const app: express.Application = express();
 const PORT = 3030;
 

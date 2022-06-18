@@ -1,24 +1,36 @@
 import { Request, Response } from "express";
 import { ShowService } from '../services'
 import HTTP_STATUS from '../enum/http-status.enum';
+import { CustomResponse } from "../interface/custom-response.interface";
+import BadRequestException from "../exceptions/bad-request.exception";
 
 const showsService = new ShowService();
 
 class ShowController {
 
-  public static async list(req: Request, res: Response){    
-    if(('id' in req.query) ){ 
-      try{
-        let id;
-        if(req.query.id){
-           id = req.query.id;
-        }
-        id = Number(id);        
-        const show = await showsService.find(Number(id))
+  public static async list(req: Request, res: CustomResponse){    
+    if('id' in req.query){       
+      try{ 
+        /*       
+        let ids: string[] = [];                
+        ids = (<string>req.query.id).split(',');              
+        ids.forEach((numb) =>{
+          let i = numb;
+          ids.shift();
+        });
+        
+        /*
+        if(isNaN(id)){
+          throw new BadRequestException('Erro ao receber id. Apenas um id pode ser processado pelo metodo.');
+        }    
+        */  
+        let id;          
+        id = req.query.id;
+        const show = await showsService.find(Number(id));
         res.status(HTTP_STATUS.OK).json(show);
         return;
       } catch(e:any){
-        console.log(e);
+        //console.log(e);
         res.status(e.status).json(e.message);        
       }    
       
@@ -31,34 +43,28 @@ class ShowController {
     
   }
 
-  public static async create(req:Request, res:Response){
-    const show = req.body;    
-    const result = await showsService.create(show);
-    res.status(HTTP_STATUS.CREATED).send(result);    
+  public static async create(req:Request, res:CustomResponse){
+    try{
+      const show = req.body;    
+      const result = await showsService.create(show);
+      res.status(HTTP_STATUS.CREATED).send(result); 
+
+    }catch(e){
+      res.errorHandler && res.errorHandler(e);
+    }
+       
   }
-  public static async delete(req: Request, res: Response){
+
+  public static async delete(req: Request, res: CustomResponse){
     try{
       const id = req.query.id;
       const result = await showsService.delete(Number(id));
       res.status(HTTP_STATUS.ACCEPTED).send(result);
     }catch(e: any){
-      res.status(e.status).send(e);
+      res.errorHandler && res.errorHandler(e);      
     }
 
-  }
-  /**
-   * 
-   * @param req 
-   * @param res 
-   * 
-   * @deprecated
-   */
-  public static async listOne(req:Request, res:Response){
-    const id = req.query.id;    
-    const result = await showsService.find(Number(id));    
-    res.status(HTTP_STATUS.OK).send(result)
-    //return showsService.find(Number(id))
-  }
+  } 
 }
 
 export default ShowController;
