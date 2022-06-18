@@ -1,4 +1,4 @@
-import { IsNull, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { AppDataSource } from "../../config/database/data-source"
 import { Show } from "../entities";
 import NotFoundException from "../exceptions/not-found.exception";
@@ -38,14 +38,15 @@ class ShowService {
    * 
    * @beta
    */
-  async find(show: Show | boolean | number = false, limiter:number = 0){
+  async find(show: Show | boolean | number  = false, limiter:number = 0){
     if(show === false){
       return this.showRepository.find()
     }
     else if(typeof show == 'number'){
-      const showToReturn = await this.findOne(show);  
+      const id = show;
+      const showToReturn = await this.findOne(id);  
       if(!showToReturn){
-        throw new NotFoundException('Não encontrado');
+        throw new NotFoundException(`O show de id: ${id} não foi encontrado.`);
       }   
       return showToReturn;
     }
@@ -57,12 +58,13 @@ class ShowService {
   }
   
   async delete(id: number){
-    const show = await this.showRepository.delete(id);
+   
+      const show = await this.showRepository.delete(id);
 
     if(show.affected){
       return show;
     }
-    throw new NotFoundException('Não encontrado');
+    else throw new NotFoundException('Não encontrado');    
   }
 
   create(show: createShowDTO){
