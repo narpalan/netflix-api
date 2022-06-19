@@ -1,5 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import ShowCategory from "../enum/show-category.enum";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+
+import { ShowCategory } from "../enum";
+import Episode from "./episode.entity";
 
 @Entity('shows')
 class Show{
@@ -9,7 +11,7 @@ class Show{
   @Column()
   title: string;
 
-  @Column({type: 'longtext'})
+  @Column({length: 200})
   cover: string;
 
   @Column({length: 200, default:''})
@@ -23,6 +25,9 @@ class Show{
 
   @Column({type: 'enum', default: ShowCategory.MOVIE, enum: ShowCategory})
   category: ShowCategory;
+
+  @OneToMany(()=>Episode, episode => episode.show, {eager:true})
+  episodes: Episode[]
 }
 
-export default Show
+export default Show;

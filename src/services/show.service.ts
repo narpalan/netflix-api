@@ -1,7 +1,10 @@
 import { Repository } from "typeorm";
-import { AppDataSource } from "../../config/database/data-source"
+
+import { AppDataSource } from "../../config/database/data-source";
 import { Show } from "../entities";
-import NotFoundException from "../exceptions/not-found.exception";
+import { NotFoundException } from "../exceptions";
+
+const notFoundMsg = (id: number) => {return `O show de id: ${id} não foi encontrado`} ;
 
 interface createShowDTO {
   title: string;  
@@ -21,7 +24,7 @@ class ShowService {
    * @returns Retorna uma lista de filmes
    * 
    */
-  list(){
+  async list(){
     return this.showRepository.find()
   }
 
@@ -46,25 +49,31 @@ class ShowService {
       const id = show;
       const showToReturn = await this.findOne(id);  
       if(!showToReturn){
-        throw new NotFoundException(`O show de id: ${id} não foi encontrado.`);
+        throw new NotFoundException(notFoundMsg(id));
       }   
       return showToReturn;
     }
     else return null;
   }
 
-  private async findOne(id: number){       
-    return this.showRepository.findOne({where: {id}})
+  async findOne(id: number){   
+    const show = await this.showRepository.findOne({where: {id} } );
+
+    if(!show){
+      throw new NotFoundException(notFoundMsg(id));
+    }
+    else{
+      return show;
+    }        
   }
   
-  async delete(id: number){
-   
+  async delete(id: number){   
       const show = await this.showRepository.delete(id);
 
     if(show.affected){
       return show;
     }
-    else throw new NotFoundException('Não encontrado');    
+    else throw new NotFoundException(notFoundMsg(id));    
   }
 
   create(show: createShowDTO){

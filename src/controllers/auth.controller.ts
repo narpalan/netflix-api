@@ -1,19 +1,18 @@
 import { Request } from "express";
-import { CustomResponse } from "../interface/custom-response.interface";
-import AuthService from "../services/auth.service";
+import { CustomResponse } from "../interfaces";
+import { AuthService } from "../services";
 
 const authService = new AuthService();
 
 class AuthController{
-  public static async login(req: Request, res: CustomResponse){
-    const { body: {email, pswd}} = req;
+  public static async login(req: Request, res: CustomResponse){    
+    const { body: {email, pswd}} = req;    
 
-    res.json({token:'token ddo evernote'})
     try{
-      const authenticated = authService.login(email,pswd)
-      return authenticated;
-    }catch(e){
-      res.errorHandler && res.errorHandler(e)
+      const authenticated = await authService.login(email,pswd)
+      res.send(authenticated);      
+    }catch(e:any){
+      res.errorHandler && res.errorHandler(e.message)
     }
   }
 }

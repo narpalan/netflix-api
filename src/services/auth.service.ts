@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import UnauthorizedException from "../exceptions/unauthorized.exception";
+import { UnauthorizedException } from '../exceptions';
 import UserService from "./user.service";
 
 class AuthService{
@@ -13,25 +13,26 @@ class AuthService{
    * @param pswd pswd do usuario
    * @returns LoginResponse
    */
-  async login(email: string, pswd: string){    
+  async login(email: string, pswd: string){   
+    
     const userService = new UserService();
+    const secret = process.env.SECRET || "";
 
     const user = await userService.getUserByEmail(email);
-
     if(!user){
-      throw new UnauthorizedException('Unauthorized');
+      throw new UnauthorizedException();
     }
 
-    const pswdMatches = await bcrypt.compare(pswd, user.pswd)
+    const pswdMatches = await bcrypt.compare(pswd, user.pswd)    
     if(!pswdMatches){
-      throw new UnauthorizedException('Unauthorized');
+      throw new UnauthorizedException();
     }
     
     const token = jwt.sign({
       sub: user.id,
       iat: Date.now(),
       email: user.email
-    }, 'ABCBANANA')
+    }, secret)
     
     return{
       token

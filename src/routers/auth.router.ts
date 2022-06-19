@@ -1,11 +1,11 @@
-import express from "express"
+import express from "express";
 
-import { AuthController } from "../controllers"
-import validationMiddleware from "../middlewares/validation.middleware"
-import LoginSchema from "../schemas/login.schema"
+import { AuthController } from "../controllers";
+import { validationMidlwr } from "../middlewares";
+import { loginSchema } from "../schemas";
 
-const AuthRouter = express.Router()
+const authRouter = express.Router()
 
-AuthRouter.post("/auth", validationMiddleware(LoginSchema), AuthController.login)
+authRouter.post("/auth", validationMidlwr(loginSchema), AuthController.login)
 
-export default AuthRouter;
+export default authRouter;

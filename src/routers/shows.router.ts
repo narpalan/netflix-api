@@ -1,12 +1,15 @@
 import express from "express";
+import passport from "passport";
+
 import { ShowController } from "../controllers";
-import validationMiddleware from "../middlewares/validation.middleware";
+import { validationMidlwr } from "../middlewares";
 import createShowSchema from "../schemas/create-show.schema";
 
-const ShowsRouter = express.Router();
+const showsRouter = express.Router();
 
-ShowsRouter.get('/shows', ShowController.list);
-ShowsRouter.delete('/shows', ShowController.delete);
-ShowsRouter.post('/shows', validationMiddleware(createShowSchema), ShowController.create);
+showsRouter.get('/shows', passport.authenticate('jwt', {session:false}), ShowController.list);
+showsRouter.get('/shows/:id', passport.authenticate('jwt', {session:false}), ShowController.listOne);
+showsRouter.post('/shows', passport.authenticate('jwt',{session:false}), validationMidlwr(createShowSchema), ShowController.create);
+showsRouter.delete('/shows/:id', passport.authenticate('jwt',{session:false}), ShowController.delete);
 
-export default ShowsRouter;
+export default showsRouter;

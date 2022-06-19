@@ -1,8 +1,11 @@
 import bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+
+
 import { AppDataSource } from '../../config/database/data-source';
 import { User } from '../entities';
-import BadRequestException from '../exceptions/bad-request.exception';
+import { BadRequestException } from '../exceptions';
+
 
 interface createUserDTO{
   email: string;
@@ -11,9 +14,20 @@ interface createUserDTO{
 
 class UserService{
   userRepository: Repository<User>
+
   constructor(){
     this.userRepository = AppDataSource.getRepository(User);
 
+  }
+
+  private async emailUsed(email:string){
+    const userFound = await this.userRepository.findOne({where: {email}})
+    return !!userFound;
+  }
+
+  async getUserByEmail(email:string){
+    const userFound = await this.userRepository.findOne({where: {email}})
+    return userFound;
   }
 
   /**
@@ -24,13 +38,13 @@ class UserService{
    */
   async create(createUserDTO: createUserDTO){
     const { email, pswd } = createUserDTO; 
+    
     const emailUsed = await this.emailUsed(email);
-
     if(emailUsed){
       throw new BadRequestException('Usuário já cadastrado.');
     }
 
-    const SALTS =  25;    
+    const SALTS =  5;    
 
     const newUserPayload = {
       email,
@@ -38,17 +52,7 @@ class UserService{
     }
     
     return this.userRepository.save(newUserPayload);
-  }
-  
-  private async emailUsed(email:string){
-    const userFound = await this.userRepository.findOne({where: {email}})
-    return !!userFound;
-  }
-
-  async getUserByEmail(email:string){
-    const userFound = await this.userRepository.findOne({where: {email}})
-    return userFound;
-  }
+  } 
 }
 
 export default UserService;

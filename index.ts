@@ -1,20 +1,27 @@
+import "dotenv/config"
 import "reflect-metadata";
 import express from 'express';
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import passport from "passport";
 
 
 import runDatabase from "./config/database/data-source";
 import startRoutes from "./src/routers";
-import { ExtractJwt } from "passport-jwt";
+const app: express.Application = express();
+
+const PORT = process.env.PORT || 3300;
+
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'ABCBANANA' 
+  secretOrKey: process.env.SECRET 
 }
 
-const strategy = new JwtStrategy(opts, function(payload, done){
-  console.log(payload)
+const strategy = new JwtStrategy(opts, function(payload, done){  
+  return done(null, {});
 })
-const app: express.Application = express();
-const PORT = 3030;
+
+passport.use(strategy);
+
 
 runDatabase();
 startRoutes(app);

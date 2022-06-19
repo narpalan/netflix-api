@@ -1,10 +1,11 @@
 import express from 'express';
+
 import { UserController } from '../controllers';
-import validationMiddleware from '../middlewares/validation.middleware';
+import { validationMidlwr } from '../middlewares';
 import createUserSchema from '../schemas/create-user.schema';
 
-const UserRouter = express.Router();
+const userRouter = express.Router();
 
-UserRouter.post('/user', validationMiddleware(createUserSchema),  UserController.create);
+userRouter.post('/user', validationMidlwr(createUserSchema),  UserController.create);
 
-export default UserRouter;
+export default userRouter;

@@ -4,7 +4,7 @@ abstract class  HttpException extends Error{
   msg: string;
   status: HTTP_STATUS;
 
-  constructor(msg: string, status: number){
+  constructor(msg: string, status: HTTP_STATUS){
     super(msg)
     this.status =  status;
     this.msg = msg;
